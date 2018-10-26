@@ -33,7 +33,7 @@ https://dist.ipfs.io/#ipfs-cluster-service
 # echo $CLUSTER_SECRET
 9a420ec947512b8836d8eb46e1c56fdb746ab8a78015b9821e6b46b38344038f
 
-# 配置 ipfs-cluster.service 系统服务
+# 配置 ipfs-cluster.service 系统服务 参考https://cluster.ipfs.io/documentation/deployment/#systemd-service-files
 # vi /usr/lib/systemd/system/ipfs-cluster.service #添加下面内容
 [Unit]
 Description=IPFS Cluster Service
@@ -64,26 +64,46 @@ QmXysjiXyvtesL7jTQ4u9DuedKYrfsM8vf8qgUNtnZbaGx | ipfsserver03 | Sees 4 other pee
 QmXysjiXyvtesL7jTQ4u9DuedKYrfsM8vf8qgUNtnZbaGx  为该节点集群id
 
 获取所有集群id后编辑下表:
-
+/ip4/10.10.20.221/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
+/ip4/10.10.20.222/tcp/9096/ipfs/QmQfPPQSWXFA2PNctptgUvG4Vc91ghhA3uLwt6VXPvivve
+/ip4/10.10.20.223/tcp/9096/ipfs/QmXysjiXyvtesL7jTQ4u9DuedKYrfsM8vf8qgUNtnZbaGx
+/ip4/10.10.20.224/tcp/9096/ipfs/Qmc7fjoUrWcgFm3gGbwurPYKNS55QJz8xNerX56Gj5FbXq
+/ip4/10.10.20.225/tcp/9096/ipfs/QmNnNKmXfsqyeU5HwmYDxGtvG6vZKyBhUgpRWV1BTUmKd7
 
  
-# ipfs-cluster-service daemon --bootstrap <multiaddress of first peer> 
-
 其他节点启动命令
+# systemctl stop ipfs-cluster.service
 # ipfs-cluster-service daemon --bootstrap /ip4/10.10.20.221/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
 
-在添加另外节点信息
-# ipfs-cluster-ctl peers add /ip4/10.10.20.221/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
 
-
-显示所有已经连接的节点
+查看其他节点信息
 # ipfs-cluster-ctl peers ls
+QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR | ipfsserver01 | Sees 4 other peers
+  > Addresses:
+    - /ip4/10.220.20.221/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
+    - /ip4/127.0.0.1/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
+  > IPFS: QmVKxUgE6MGtPydSpoxCTyFjeEbxtXJpBKP5bYWhdSh9PW
+    - /ip4/10.220.20.221/tcp/4001/ipfs/QmVKxUgE6MGtPydSpoxCTyFjeEbxtXJpBKP5bYWhdSh9PW
+    - /ip4/127.0.0.1/tcp/4001/ipfs/QmVKxUgE6MGtPydSpoxCTyFjeEbxtXJpBKP5bYWhdSh9PW
+......略      可在这里看到其他所有节点信息
+
 
 如果无法启动 daemon 进程, 清理下状态
 # ipfs-cluster-service state cleanup
 
 删除 peer 
 # ipfs-cluster-ctl peers rm <peerID>
+
+停止手工启动的ipfs-cluster进程
+# ps -ef |grep ipfs-cluster
+root      9441     1  0 Oct24 ?        00:16:00 /usr/bin/ipfs-cluster-service daemon
+# kill -9 9441
+
+以后台systemctl进程启动
+# systemctl start ipfs-cluster.service
+# ps -ef |grep ipfs-cluster
+root      9441     1  0 Oct24 ?        00:16:00 /usr/bin/ipfs-cluster-service daemon --upgrade
+
 
 向集群添加文件
 # ipfs-cluster-ctl add /tmp/yum.log
@@ -121,29 +141,9 @@ $ ipfs-cluster-ctl recover Qma4Lid2T1F68E3Xa3CpE6vVJDLwxXLD8RfiB9g1Tmqp58   # at
 
 查看节点状态
 # ipfs-cluster-ctl status
-QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH :
-    > ipfsserver01    : PINNED | 2018-10-16T07:44:14Z
-    > ipfsserver02    : PINNED | 2018-10-16T07:44:14Z
-    > ipfsserver03    : PINNED | 2018-10-16T07:44:14Z
-QmbT9pR8pyppjjuZrMvbDGgxBA48FWRa1i2RVJ1GgvH9jd :
-    > ipfsserver01    : PINNED | 2018-10-16T07:46:51Z
-    > ipfsserver02    : PINNED | 2018-10-16T07:46:51Z
-    > ipfsserver03    : PINNED | 2018-10-16T07:46:51Z
-
-
-
-
-添加系统服务参考下面脚本  https://cluster.ipfs.io/documentation/deployment/#systemd-service-files
-[Unit]
-Description=IPFS Cluster Service
-After=network.target
-
-[Service]
-ExecStart=/usr/local/bin/ipfs-cluster-service daemon --upgrade
-Restart=on-failure
-User=ipfs
-
-[Install]
-WantedBy=multi-user.target
-
-
+QmfVqrFoBVw6PDGTaJBdzfb6D9Y9L4vikAzKoUc9XmQoc2 :
+    > ipfsserver01    : PINNED | 2018-10-24T09:12:10Z
+    > ipfsserver05    : PINNED | 2018-10-24T09:17:03Z
+    > ipfsserver02    : PINNED | 2018-10-24T09:15:04Z
+    > ipfsserver03    : PINNED | 2018-10-24T09:14:44Z
+    > ipfsserver04    : PINNED | 2018-10-24T09:16:23Z
