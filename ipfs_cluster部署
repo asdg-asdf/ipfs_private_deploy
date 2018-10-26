@@ -1,0 +1,149 @@
+IPFS Cluster 部署前提需要在所有设备完成ipfs私有链部署
+下载下面两个包
+https://dist.ipfs.io/#ipfs-cluster-ctl
+https://dist.ipfs.io/#ipfs-cluster-service
+复制下载软件包到/opt/ipfs_media
+
+# cd /opt/ipfs_media
+# tar -xzvf *.tar.gz
+# cp ipfs-cluster-service /usr/bin/
+# cp ipfs-cluster-ctl /usr/bin/                   # 控制节点可只部署一个, 其他节点可不复制该文件
+
+默认所有的配置文件在 /root/.ipfs-cluster 下
+/root/.ipfs-cluster/service.json  为默认配置文件
+
+也可用-c 参数制定配置文件位置
+# ipfs-cluster-service -c <path>   
+
+在所有节点执行初始化 ipfs cluster 命令 
+# ipfs-cluster-service init
+
+选取ip最小的节点为第一个节点并获取 secret 值,并修改其他所有节点/root/.ipfs-cluster/service.json文件中 secret 值为该值
+# cat /root/.ipfs-cluster/service.json
+{
+  "cluster": {
+    "id": "QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR",
+    "peername": "ipfsserver01",
+    "private_key": "CAASpwkwggSjAgEAAoIBAQC2QzOWhhMpISht7h7UXfn1n+ENMPOYw3EVrkDVEs6DBZpzOiKGTXFs+7ejY8z2F1Nl8nJl5m25/egGWLopsECgPL14u4XaIb0ylhN0MP2ysb5QBT6WJMxQANKm6vWHg9aWbscAGzKrRG33AZJ6IPxU61DinS4FQ+LzafR3/Z5bj4xfLnU/q/qGtm5iIc7yla9IvJg7Q2bzPJ1fwruGJyWVbGpwYp/F7H5NEDPK0n7Ytg6psJMAGcbzuvlacUareDKKUxs54xeBJYfK7N7WRkNYd0GD22UdDDXneNhFvDYWVptZXPEJCW3egPkm/kY34Cpm8BemaSpOggmyjcttd3eRAgMBAAECggEAFjqh+xTFF3oUzTuChRIlH0DtmMdEnngPvb4v6AzQJQi06qLHfSvKzqjwn7vXTphPsppcO3NcJJgECWoe4mC9sQ1XancsfwsoYRgOrVggSQAGnwnUtUktpgBDsNntMibxMA24tZmbl2nUI5EMhVqqi8zbY5gZ+chq0Jc2mr/S5YWqaK9+hXQ8r6CxM6jubP0bbCf11xZkCsv5BeffVC6ByD/Gg7eouxwAn3q0obQHx7KcrqgUsmfzESM2qxHlYfMiCOy11ixB7VlPPYMjhnCVzsqC9Djw89Rbg4EwRojc8TJV3yhSnk0qIvQQJvdSxTsxWQNxzwvhsryqX6rB+lTIQQKBgQDx8FOE41nfIMP07hqAN0BQek56bHDS/7fgvDeeORwxkCofQSrjOffoF6hWTSw1nwwVJ0g1OxOU0aD7hHv4I1qmM8GQ8yVZhAw2JHA+2aUMZtGdxT+egQky0jJ62TaeJFxbF4Nxwj6dYksbA2ko0Z0W+UzZ3S6xFokufJGux69AiQKBgQDA2vwlNWHkcUXhgEJM6KLVPNGIE0qEy8VwcrQ7HgfpZSIMjcp5fMhdV+vhk8qvuUBFHnSvjbkfCq4YaPLj4iEzK5hWdW9dygGyB0Nr9G1SQHUwe/YnPszfqh5edSo7/aisZmtcJ2E0N3jNjCu4E7obAyawp6QT/YJhjstYN4RsyQKBgQDReXpmuY4rsavYmnuZfb0SsQLX3qJFHiFv1Kb3OI1foGnIC919RciOTEV1C3Z2qtGEUzGi3RaUKHiQrOHFM58d/fvfa5ZwDfOgwSXqVPkhZrihOJJfw2tadEI+uWkfvW21dQNa8IrUK7HJnsdjDzJLHOjcTTRLIa7+794XDU+AuQKBgEE+1OdRtBixKc8ssUGLwusZdFnxDNj4h4ePhuIpOsv/ZxGQNtv7F15dDHR4p63jopa/wwJRlDuoRVYEy4fFTS4epZ86g77bRM+SHYE8ZG/bVspcZd7JJE7XIwcZ5Hv/ST1qORAoUn5z9e60aWYRZnkVC9XgIWaR8bZHtQvXXHnhAoGAZ50ZME8q1Oh3B9GU2nXEiK1uClSOcRjYcrHsUSOlpLh+t5cAFHeDk7/lXQb+CrmLKonREJub150XvkHCNvczWV5w9cGwLzkCZu1SDmYtpeDBxRAsyqdc3XekriW2v8p/RMtdB22t2CjLtmHMujkj+3hwm4xEFa7KI8lK9RuTqgk=",
+    "secret": "2706024cb4ec4a71c27f601b1ddf92a4b884a8749e3625354a9e14536836578d",
+略......
+
+或者使用 od  -vN 32 -An -tx1 /dev/urandom | tr -d ' \n' 命令生成秘钥
+# export CLUSTER_SECRET=$(od  -vN 32 -An -tx1 /dev/urandom | tr -d ' \n')
+# echo $CLUSTER_SECRET
+9a420ec947512b8836d8eb46e1c56fdb746ab8a78015b9821e6b46b38344038f
+
+# 配置 ipfs-cluster.service 系统服务
+# vi /usr/lib/systemd/system/ipfs-cluster.service #添加下面内容
+[Unit]
+Description=IPFS Cluster Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/ipfs-cluster-service daemon --upgrade
+Restart=on-failure
+User=root
+
+[Install]
+WantedBy=multi-user.target
+
+配置 ipfs-cluster 服务启动
+# systemctl daemon-reload 
+# systemctl enalbe ipfs-cluster.service 
+# systemctl stop ipfs-cluster.service 
+
+启动ip最小的节点使用下面命令
+# systemctl start ipfs-cluster.service
+
+获得该节点 ipfs-cluster id 
+# ipfs-cluster-ctl id
+QmXysjiXyvtesL7jTQ4u9DuedKYrfsM8vf8qgUNtnZbaGx | ipfsserver03 | Sees 4 other peers
+  > Addresses:
+......略
+    
+QmXysjiXyvtesL7jTQ4u9DuedKYrfsM8vf8qgUNtnZbaGx  为该节点集群id
+
+获取所有集群id后编辑下表:
+
+
+ 
+# ipfs-cluster-service daemon --bootstrap <multiaddress of first peer> 
+
+其他节点启动命令
+# ipfs-cluster-service daemon --bootstrap /ip4/10.10.20.221/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
+
+在添加另外节点信息
+# ipfs-cluster-ctl peers add /ip4/10.10.20.221/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
+
+
+显示所有已经连接的节点
+# ipfs-cluster-ctl peers ls
+
+如果无法启动 daemon 进程, 清理下状态
+# ipfs-cluster-service state cleanup
+
+删除 peer 
+# ipfs-cluster-ctl peers rm <peerID>
+
+向集群添加文件
+# ipfs-cluster-ctl add /tmp/yum.log
+added QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH yum.log
+
+删除pin的文件
+# ipfs-cluster-ctl pin rm QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH
+QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH :
+    > ipfsserver01    : UNPINNED | 2018-10-16T07:53:24Z
+    > ipfsserver02    : UNPINNED | 2018-10-16T07:53:24Z
+    > ipfsserver03    : UNPINNED | 2018-10-16T07:53:24Z
+
+
+向集群添加目录
+# ipfs-cluster-ctl add -r /tmp/testfile
+
+
+查看 pin 文件
+# ipfs-cluster-ctl pin ls
+QmbT9pR8pyppjjuZrMvbDGgxBA48FWRa1i2RVJ1GgvH9jd |  | PIN | Repl. Factor: -1 | Allocations: [everywhere] | Recursive
+-1 == all
+
+常用命令
+$ ipfs-cluster-ctl id                                                       # show cluster peer and ipfs daemon information
+$ ipfs-cluster-ctl peers ls                                                 # list cluster peers
+$ ipfs-cluster-ctl peers rm <peerid>                                        # remove a cluster peer
+$ ipfs-cluster-ctl add myfile.txt http://domain.com/file.txt                # adds content to the cluster
+$ ipfs-cluster-ctl pin add Qma4Lid2T1F68E3Xa3CpE6vVJDLwxXLD8RfiB9g1Tmqp58   # pins a CID in the cluster
+$ ipfs-cluster-ctl pin rm Qma4Lid2T1F68E3Xa3CpE6vVJDLwxXLD8RfiB9g1Tmqp58    # unpins a CID from the clustre
+$ ipfs-cluster-ctl pin ls [CID]                                             # list tracked CIDs (shared state)
+$ ipfs-cluster-ctl status [CID]                                             # list current status of tracked CIDs (local state)
+$ ipfs-cluster-ctl sync Qma4Lid2T1F68E3Xa3CpE6vVJDLwxXLD8RfiB9g1Tmqp58      # re-sync seen status against status reported by the IPFS daemon
+$ ipfs-cluster-ctl recover Qma4Lid2T1F68E3Xa3CpE6vVJDLwxXLD8RfiB9g1Tmqp58   # attempt to re-pin/unpin CIDs in error state
+
+
+查看节点状态
+# ipfs-cluster-ctl status
+QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH :
+    > ipfsserver01    : PINNED | 2018-10-16T07:44:14Z
+    > ipfsserver02    : PINNED | 2018-10-16T07:44:14Z
+    > ipfsserver03    : PINNED | 2018-10-16T07:44:14Z
+QmbT9pR8pyppjjuZrMvbDGgxBA48FWRa1i2RVJ1GgvH9jd :
+    > ipfsserver01    : PINNED | 2018-10-16T07:46:51Z
+    > ipfsserver02    : PINNED | 2018-10-16T07:46:51Z
+    > ipfsserver03    : PINNED | 2018-10-16T07:46:51Z
+
+
+
+
+添加系统服务参考下面脚本  https://cluster.ipfs.io/documentation/deployment/#systemd-service-files
+[Unit]
+Description=IPFS Cluster Service
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/ipfs-cluster-service daemon --upgrade
+Restart=on-failure
+User=ipfs
+
+[Install]
+WantedBy=multi-user.target
+
+
