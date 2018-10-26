@@ -1,0 +1,46 @@
+当我们传文件到一个 ipfs 私有链中, 每次hash值是不同的, 为了保证每次其他程序调用url的一致性
+使用ipns来完成 hash 相互 对应关系, 用一个hash来对应文件变化
+
+例如:
+
+先生成 ipns 需要绑定的 hash 值
+# ipfs key gen --type=rsa --size=2048 app
+QmXdnSCnvpvpJEvMCdU2ffjdtv53J5HmggQnE7S2BbuRQi
+
+添加文件或文件目录内容到ipfs私有网络
+# ipfs add -r ./testdir
+added QmVXoaLPccW3B4fb8dkedzqvNjLrn8ZhKnDknkjAbjYCbH testdir/block.bin
+added QmZnGK3W5YD6MmF4U4Rq2eZSMDMnWGpVnDXtLjPSBDckFR testdir/v1.txt
+added Qmazfniey1migA3F7DeyE4f5EmZzwPsZUg9vPuUanLfkM2 testdir
+
+把新添加的文件或目录的 hash 值绑定到 ipns 的 hash 上
+# ipfs name publish --key=app /ipfs/Qmazfniey1migA3F7DeyE4f5EmZzwPsZUg9vPuUanLfkM2
+或者
+# ipfs name publish --key=QmXdnSCnvpvpJEvMCdU2ffjdtv53J5HmggQnE7S2BbuRQi /ipfs/Qmazfniey1migA3F7DeyE4f5EmZzwPsZUg9vPuUanLfkM2
+
+对 ipns 的访问  http://10.10.20.222:8080/ipns/QmRB5ZpwF5HrCF5XYXorg5M1cidKvmnFhcJW6Z9paVmv2u          #注意这里访问的是 ipns 
+block.bin
+v1.txt
+
+
+当有程序更新时,再次添加新的内容到ipfs私有网络
+# ipfs add -r ./testdir
+added QmVXoaLPccW3B4fb8dkedzqvNjLrn8ZhKnDknkjAbjYCbH testdir/block.bin
+added QmZnGK3W5YD6MmF4U4Rq2eZSMDMnWGpVnDXtLjPSBDckFR testdir/v1.txt
+added QmZnGK3W5YD6MmF4U4Rq2eZSMDMnWGpVnDXtLjPSBDckFR testdir/v2.txt                   #添加了一个新文件
+added QmbbZUUcYrchQH1VTbQAWoQqeZ61555LqjfAJXarzZgJRe testdir
+
+再次把新添加的文件或目录的 hash 值绑定到 ipns 的原有 hash 上
+# ipfs name publish --key=app /ipfs/QmbbZUUcYrchQH1VTbQAWoQqeZ61555LqjfAJXarzZgJRe
+或者
+# ipfs name publish --key=QmXdnSCnvpvpJEvMCdU2ffjdtv53J5HmggQnE7S2BbuRQi /ipfs/QmbbZUUcYrchQH1VTbQAWoQqeZ61555LqjfAJXarzZgJRe
+
+
+再次访问  http://10.10.20.222:8080/ipns/QmXdnSCnvpvpJEvMCdU2ffjdtv53J5HmggQnE7S2BbuRQi          #注意这里访问的是 ipns 
+block.bin
+v1.txt
+v2.txt
+内容产生了变化
+
+这样使用ipns技术保持了其他程序访问ipfs网络文件的一致性
+
