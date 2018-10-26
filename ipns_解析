@@ -4,8 +4,12 @@
 例如:
 
 先生成 ipns 需要绑定的 hash 值
-# ipfs key gen --type=rsa --size=2048 app
+# ipfs key gen --type=rsa --size=2048 appurl
 QmXdnSCnvpvpJEvMCdU2ffjdtv53J5HmggQnE7S2BbuRQi
+
+列出所有已经创建的key列表 
+# ipfs key list
+app
 
 添加文件或文件目录内容到ipfs私有网络
 # ipfs add -r ./testdir
@@ -43,4 +47,27 @@ v2.txt
 内容产生了变化
 
 这样使用ipns技术保持了其他程序访问ipfs网络文件的一致性
+
+反向解析一个 ipns
+# ipfs name resolve /ipns/QmRB5ZpwF5HrCF5XYXorg5M1cidKvmnFhcJW6Z9paVmv2u
+/ipfs/Qmazfniey1migA3F7DeyE4f5EmZzwPsZUg9vPuUanLfkM2                           获得对象 hash
+# ipfs ls /ipfs/Qmazfniey1migA3F7DeyE4f5EmZzwPsZUg9vPuUanLfkM2                 获得对象内容
+QmbT9pR8pyppjjuZrMvbDGgxBA48FWRa1i2RVJ1GgvH9jd 456       testdir/
+QmZnGK3W5YD6MmF4U4Rq2eZSMDMnWGpVnDXtLjPSBDckFR 76        v1.txt
+QmZnGK3W5YD6MmF4U4Rq2eZSMDMnWGpVnDXtLjPSBDckFR 76        v2.txt
+QmZnGK3W5YD6MmF4U4Rq2eZSMDMnWGpVnDXtLjPSBDckFR 76        v3.txt
+
+将 ipfs 文件系统mount到linux上
+# ipfs name publish --key=self /ipfs/Qmazfniey1migA3F7DeyE4f5EmZzwPsZUg9vPuUanLfkM2 
+# ipfs mount
+或者
+# ipfs mount --ipns-path=/tmp/ipns-test
+IPFS mounted at: /ipfs
+IPNS mounted at: /tmp/ipns-te 
+#进入 /tmp/ipns-test  可看到其内容
+如果修改 /tmp/ipns-test 内容ipfs 会产生新的版本
+# ipfs name resolve ${ipfs id}
+/ipfs/QmVFBZ9Ap8RX8gn92LZHVvv3mGTBNoY9zsW4JwTMZUxZ31    这里已经和原来挂载的Qmazfniey1migA3F7DeyE4f5EmZzwPsZUg9vPuUanLfkM2不同
+
+
 
