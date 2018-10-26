@@ -1,0 +1,121 @@
+加密文件方法,使用gpg命令生产加密密钥
+# gpg --gen-key                 
+gpg (GnuPG) 2.0.22; Copyright (C) 2013 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+gpg: directory `/root/.gnupg' created
+gpg: new configuration file `/root/.gnupg/gpg.conf' created
+gpg: WARNING: options in `/root/.gnupg/gpg.conf' are not yet active during this run
+gpg: keyring `/root/.gnupg/secring.gpg' created
+gpg: keyring `/root/.gnupg/pubring.gpg' created
+Please select what kind of key you want:
+   (1) RSA and RSA (default)
+   (2) DSA and Elgamal
+   (3) DSA (sign only)
+   (4) RSA (sign only)
+Your selection?                        # 直接回车默认使用 (1) RSA and RSA (default)
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048)       # 直接回车默认使用 2048 bits秘钥
+Requested keysize is 2048 bits
+Please specify how long the key should be valid.
+         0 = key does not expire
+      <n>  = key expires in n days
+      <n>w = key expires in n weeks
+      <n>m = key expires in n months
+      <n>y = key expires in n years
+Key is valid for? (0)                  # 直接回车默认使用 not expire 永不过期
+Key does not expire at all
+Is this correct? (y/N) y               # 输入 y 确定 秘钥不过期
+
+GnuPG needs to construct a user ID to identify your key.
+
+Real name: root                    # 输入 自己定义的名称大于等于5个字符
+Email address: root@root.com.cn    # 输入 自己邮箱
+Comment: 
+You selected this USER-ID:
+    "root <root@root.com.cn>"
+
+Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O      # 输入 O 确定
+You need a Passphrase to protect your secret key.
+
+
+   +-----------------------------------------------------+
+   | Enter passphrase                                    |
+   |                                                     |
+   |                                                     |
+   | Passphrase ________________________________         |  # 回车   如果输入口令加密文件后解压时也需要口令
+   |                                                     |
+   |       <OK>                             <Cancel>     |
+   +-----------------------------------------------------+
+
+
+
+   +-----------------------------------------------------+
+   | Please re-enter this passphrase                     |
+   |                                                     |
+   | Passphrase ________________________________         | # 再次回车   如果输入口令加密文件后解压时也需要口令
+   |                                                     |
+   |       <OK>                             <Cancel>     |
+   +-----------------------------------------------------+
+
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+gpg: /root/.gnupg/trustdb.gpg: trustdb created
+gpg: key 10E97F06 marked as ultimately trusted
+public and secret key created and signed.
+
+gpg: checking the trustdb
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+pub   2048R/10E97F06 2018-10-17
+      Key fingerprint = 45AB ADF5 7BAA AFB4 0221  837E 6636 762F 10E9 7F06
+uid                  root <root@root.com.cn>
+sub   2048R/11CF73E0 2018-10-17
+
+[root@ipfsserver01 .ipfs]# gpg --list-keys
+/root/.gnupg/pubring.gpg
+------------------------
+pub   2048R/10E97F06 2018-10-17                                  #  10E97F06 公钥id
+uid                  root <root@root.com.cn>
+sub   2048R/11CF73E0 2018-10-17                                  #  11CF73E0 私钥id
+
+备份公钥
+gpg --armor --output 导出公钥文件名称 --export 公钥id
+# gpg --armor --output pub.key --export 10E97F06  
+
+
+备份私钥
+gpg --armor --export-secret-keys 私钥id
+# gpg --armor --output pri.key --export-secret-keys 11CF73E0
+
+
+导入公钥私钥到新设备
+# gpg --import pub.key 
+# gpg --import pri.key
+
+加密一个文件
+gpg --encrypt --recipient  [公钥id]  ipfs_demo.txt
+# gpg --encrypt --recipient D762540C ipfs_demo.txt
+
+
+解密一个文件
+# gpg --decrypt ipfs_demo.txt
+
+查看当前设备 秘钥信息
+# gpg --list-keys
+/root/.gnupg/pubring.gpg
+------------------------
+pub   2048R/10E97F06 2018-10-17                                   # 公钥id
+uid                  root <root@root.com.cn>
+sub   2048R/11CF73E0 2018-10-17                                   # 私钥id
+
+pub   2048R/D762540C 2018-10-17                                   # 公钥id
+uid                  root <root@root.com.cn>
+sub   2048R/6EFCEA67 2018-10-17                                   # 私钥id
