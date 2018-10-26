@@ -1,0 +1,193 @@
+linux准备
+# mkdir /opt/ipfs/
+# mkdir /opt/ipfs-server/
+
+所有私有节点安装 ipfs 包
+https://dist.ipfs.io/#go-ipfs   下载最新版本go-ipfs.tar.gz
+# tar xvfz go-ipfs.tar.gz
+# cd go-ipfs
+# ./install.sh
+
+所有私有节点配置环境变量LIBP2P_FORCE_PNET=1 , 强制ipfs系统使用私有网络方式启动 daemon
+# echo 'export LIBP2P_FORCE_PNET=1' >> /etc/profile
+
+所有私有节点初始化 ipfs 配置
+# ipfs init
+
+所有私有节点修改 ipfs 配置
+# vi /root/.ipfs/config 
+将ip地址 127.0.0.1 修改为 0.0.0.0 , 使外部网络可以访问ipfs的api, 删除掉ip6的行不使用ipv6配置
+  "Addresses": {
+    "API": "/ip4/0.0.0.0/tcp/5001",
+    "Announce": [],
+    "Gateway": "/ip4/0.0.0.0/tcp/8080",
+    "NoAnnounce": [],
+    "Swarm": [
+      "/ip4/0.0.0.0/tcp/4001"
+    ]
+  },
+
+配置私有链的信任key,没有swarm.key的节点无法连接到自有链
+# go get -u github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen
+# cd src/github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen
+或者
+# cd src/github.com/Kubuxu/go-ipfs-swarm-key-gen-master/ipfs-swarm-key-gen
+# go bulid
+# ./ipfs-swarm-key-gen > ~/.ipfs/swarm.key
+# scp ~/.ipfs/swarm.key ${ipaddress}:/root/.ipfs/   # 复制私有swarm.key文件到所有需要部署私有链的节点
+
+
+重启动 ipfs daemon 所有私有节点
+关闭 防火墙
+# systemctl stop firewalld.service
+# systemctl disable firewalld.service
+关闭 selinux
+# vi /etc/selinux/config    #修改为disable
+
+
+所有节点配置 ipfs 后台进程
+# vi /usr/lib/systemd/system/ipfs.service      #添加下面内容
+[Unit]
+Description=IPFS daemon
+After=network.target
+
+[Service]
+Environment="IPFS_FD_MAX=4096"
+ExecStart=/usr/local/bin/ipfs daemon --migrate
+Restart=on-failure
+User=root
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+所有节点配置 ipfs 自动启动, 并重启动系统
+# systemctl daemon-reload
+# systemctl enable ipfs.service
+# shutdown -r now  
+# ps -ef | grep ipfs       #检查是否后台以启动 ipfs
+root      4612     1  0 Oct24 ?        00:02:33 /usr/local/bin/ipfs daemon --migrate
+
+
+所有节点删除默认启动节点, 避免连接互联网线路
+# ipfs bootstrap rm --all
+# systemctl stop ipfs.service
+
+
+
+启动所有节点 ipfs daemon
+# systemctl start ipfs.service
+获节所欲点 id 如下
+# ipfs id
+{
+        "ID": "QmVKxUgE6MGtPydSpvcCTyFjeEbxtXJpBKP5nYWhdSh9PW",
+......略
+获取第一启动节点 ipaddr
+#ifconfig -a
+ens160: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 10.10.20.221  netmask 255.255.255.0  broadcast 10.10.20.255
+......略
+
+所有节点的连接串,编辑好如下行:
+ipfs bootstrap add  /ip4/10.10.20.221/tcp/4001/ipfs/QmVKxUgE6MGtPydSpvcCTyFjeEbxtXJpBKP5nYWhdSh9PW
+ipfs bootstrap add  /ip4/10.10.20.222/tcp/4001/ipfs/QmafqRH6UGdN4bJhjvLr4Zmsn8pEhc2Rn4HoLKshnPmaEu
+ipfs bootstrap add  /ip4/10.10.20.223/tcp/4001/ipfs/QmTv7xCUKzD8msnhAGtQ716Y9nHpvcEMUkauqsxEMR7hPY
+ipfs bootstrap add  /ip4/10.10.20.224/tcp/4001/ipfs/QmPkZqL1VNRGgFfPwinfJNKADV11Hpvcnemu166xCuMbLu
+ipfs bootstrap add  /ip4/10.10.20.225/tcp/4001/ipfs/QmWdMAF3HtjQdyMmsn1To7KAc87hveP7BNzWpvcodGoKZC
+
+在所有链节点添加私有链启动节点信息, 添加时不包括自身节点信息
+# ipfs bootstrap add  /ip4/10.10.20.221/tcp/4001/ipfs/QmVKxUgE6MGtPydSpvcCTyFjeEbxtXJpBKP5nYWhdSh9PW
+# ipfs bootstrap add  /ip4/10.10.20.222/tcp/4001/ipfs/QmafqRH6UGdN4bJhjvLr4Zmsn8pEhc2Rn4HoLKshnPmaEu
+# ipfs bootstrap add  /ip4/10.10.20.223/tcp/4001/ipfs/QmTv7xCUKzD8msnhAGtQ716Y9nHpvcEMUkauqsxEMR7hPY
+# ipfs bootstrap add  /ip4/10.10.20.224/tcp/4001/ipfs/QmPkZqL1VNRGgFfPwinfJNKADV11Hpvcnemu166xCuMbLu
+# ipfs bootstrap add  /ip4/10.10.20.225/tcp/4001/ipfs/QmWdMAF3HtjQdyMmsn1To7KAc87hveP7BNzWpvcodGoKZC
+# ipfs bootstrap list   #查看启动节点列表    
+# ipfs swarm peers      #查看已经连接成功的节点列表
+
+配置日志级别
+# ipfs log level all debug
+
+
+
+测试一个节点是否可连接
+# ipfs swarm connect /ip4/10.10.20.221/tcp/4001/ipfs/QmVKxUgE6MGtPydSpvcCTyFjeEbxtXJpBKP5nYWhdSh9P
+
+查找一个节点信息
+# ipfs dht findpeer QmVKxUgE6MGtPydSpvcCTyFjeEbxtXJpBKP5nYWhdSh9P
+/ip4/10.10.20.222/tcp/4001
+/ip4/127.0.0.1/tcp/4001
+
+
+ipfs节点配置信息
+# ipfs config show
+配置文件位置/root/.ipfs/config
+
+测试文件是否可保存和获取
+任意节点
+# echo "test file value 11111" > /tmp/nfile11111.txt
+# ipfs add /tmp/nfile11111.txt
+added QmcnTLdUciTnmTWWydo4WRsEit354w9hN5Q1DnR1mtoMzc nfile11111.txt
+ 22 B / 22 B [======================================================] 100.00%
+
+其他节点
+# ipfs cat QmcnTLdUciTnmTWWydo4WRsEit354w9hN5Q1DnR1mtoMzc
+test file value 11111
+或者
+# curl "http://127.0.0.1:8080/ipfs/QmYE7PbrLwhjyzoffrsnDyD9or44TYrVtuEBx6ne14crbH"
+所有其他节点可获取文件内容, 说明 ipfs 文件系统配置完成
+api方式获得文件内容
+# curl "http://localhost:5001/api/v0/cat?arg=/ipfs/QmYE7PbrLwhjyzoffrsnDyD9or44TYrVtuEBx6ne14crbH"
+
+添加文件只输出 hash 值
+# ipfs add -q file.1
+Qmae3RedM7SNkWGsdzYzsr6svmsFdsva4WoTvYYsWhUSVz
+# ipfs add -q file.2
+QmUtkGLvPf63NwVzLPKPUYgwhn8ZYPWF6vKWN3fZ2amfJF
+
+block方式保存文件
+# echo "This is some data" | ipfs block put
+QmfQ5QAjvg4GtA3wg3adpnDJug8ktA1BxurVqBD8rtgVjM
+# ipfs block get QmfQ5QAjvg4GtA3wg3adpnDJug8ktA1BxurVqBD8rtgVjM
+This is some data
+
+保存文件
+# wget http://localhost:8080/ipfs/$vidhash
+
+
+删除文件操作方法
+# echo "ipfs rocks" > foo
+# ipfs add foo
+added QmRTV3h1jLcACW4FRfdisokkQAk4E4qDhUzGpgdrd4JAFy foo
+ 22 B / 22 B [======================================================] 100.00%
+# ipfs pin ls --type=all
+# ipfs pin rm QmRTV3h1jLcACW4FRfdisokkQAk4E4qDhUzGpgdrd4JAFy
+# ipfs pin rm -r QmRTV3h1jLcACW4FRfdisokkQAk4E4qDhUzGpgdrd4JAFy
+# ipfs pin ls --type=all
+
+添加目录
+# ipfs add -r ./testdir
+added Qmesmmf1EEG1orJb6XdK6DabxexsseJnCfw8pqWgonbkoj testdir/dir01/file.3
+added Qmae3RedM7SNkWGsdzYzsr6svmsFdsva4WoTvYYsWhUSVz testdir/file.1
+added QmUtkGLvPf63NwVzLPKPUYgwhn8ZYPWF6vKWN3fZ2amfJF testdir/file.2
+added QmPcyBXYrhso4T36zUFS4x5xRTLCzY4ANtuQBG3HxpEnz7 testdir/dir01
+added QmcLCpnMKvmTgBZVcfhpPXG1jAcnARBywYZokTVnv5Cjm4 testdir
+ 18 B / 85 B [========================>---------- --------------------]  21.18%
+
+检查链中的设备连接设备表
+# ipfs swarm peers
+/ip4/10.10.20.222/tcp/4001/ipfs/QmafqRH6UGdN4bJhjvLr4Zmsn8pEhc2Rn4HoLKshnPmaEu
+/ip4/10.10.20.223/tcp/4001/ipfs/QmTv7xCUKzD8dovhAGtQ716Y9nHgcmEMUkauqsxEMR7hPY
+会显示除自己之外的连接设备
+
+显示超过 256k 的文件分块
+# ipfs ls qms2hjwx8qejwm4nmwu7ze6ndam2sfums3x6idwz5myzbn
+qmv8ndh7ageh9b24zngaextmuhj7aiuw3scc8hkczvjkww 7866189 
+qmuvjja4s4cgyqyppozttssquvgcv2n2v8mae3gnkrxmol 7866189 
+qmrgjmlhlddhvxuieveuuwkeci4ygx8z7ujunikzpfzjuk 7866189 
+qmrolalcquyo5vu5v8bvqmgjcpzow16wukq3s3vrll2tdk 7866189 
+qmwk51jygpchgwr3srdnmhyerheqd22qw3vvyamb3emhuw 5244129
+
+修改运行时的参数
+# ipfs config Discovery.MDNS.Enabled --bool true
+# systemctl restart ipfs.service    #修改参数后需要重启动生效
