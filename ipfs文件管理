@@ -1,0 +1,2 @@
+可使用下面命令把ipfs内部文件 复制到ipfs unix like 文件目录下
+ipfs files cp /ipfs/QmbrevseVQKf1vsYMsxCscRf6D7S2dftYpHwxkYf94pc7T /LiYueChun/file.txt
