@@ -1,2 +1,15 @@
 可使用下面命令把ipfs内部文件 复制到ipfs unix like 文件目录下
 ipfs files cp /ipfs/QmSSXb7Mv8AuhtmEPmiNneFqwWh86YnVqqYK1enHMqBRGA /test/testfile001.txt
+
+
+使用下面命令可把文件块的 唯一值 显示
+[root@ipfsserver01 tmp]# ipfs pin ls    显示所有pin住的块
+QmTWfNDgKqgYsXExqCQ9SjJ6FNHBQEQHhn2SHtrhXF23m4 recursive
+QmaqLMLrhwCEQTcofqTNr8ahfYeMem4JyprUg46AbVzdWU recursive
+Qmcap87Z4y89G5JyYJWCEknUT9uhkhG3MFfKEs5igiGjig indirect
+Qme4u9HfFqYUhH4i34ZFBKi1ZsW7z4MYHtLxScQGndhgKE recursive
+QmRZxcrMZjLDka2ZraWqjRxsyixW1RXUHbCZ5eDwgFrdGZ indirect
+QmSBtFkYkk26WBr4xVdQkogPSndmZgb3UeZWxxpRUPzvKc recursive
+[root@ipfsserver01 tmp]# ipfs pin ls QmRZxcrMZjLDka2ZraWqjRxsyixW1RXUHbCZ5eDwgFrdGZ     显示该块的 相关id
+QmRZxcrMZjLDka2ZraWqjRxsyixW1RXUHbCZ5eDwgFrdGZ indirect through QmTWfNDgKqgYsXExqCQ9SjJ6FNHBQEQHhn2SHtrhXF23m4
+[root@ipfsserver01 tmp]# ipfs get QmTWfNDgKqgYsXExqCQ9SjJ6FNHBQEQHhn2SHtrhXF23m4   获取该块
