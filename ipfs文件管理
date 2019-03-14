@@ -13,3 +13,24 @@ QmSBtFkYkk26WBr4xVdQkogPSndmZgb3UeZWxxpRUPzvKc recursive
 [root@ipfsserver01 tmp]# ipfs pin ls QmRZxcrMZjLDka2ZraWqjRxsyixW1RXUHbCZ5eDwgFrdGZ     显示该块的 相关id
 QmRZxcrMZjLDka2ZraWqjRxsyixW1RXUHbCZ5eDwgFrdGZ indirect through QmTWfNDgKqgYsXExqCQ9SjJ6FNHBQEQHhn2SHtrhXF23m4
 [root@ipfsserver01 tmp]# ipfs get QmTWfNDgKqgYsXExqCQ9SjJ6FNHBQEQHhn2SHtrhXF23m4   获取该块
+
+
+用集群命令 删除一个 pin文件在集群所有节点
+[root@ipfsserver01 tmp]# ipfs-cluster-ctl pin rm Qme1KDW24Y4s3mxTT278S9SbRDM397hw9EguYwLbHRtct1
+Qme1KDW24Y4s3mxTT278S9SbRDM397hw9EguYwLbHRtct1 :
+    > ipfsserver01    : UNPINNED | 2019-03-14T07:23:50Z
+    > ipfsserver05    : UNPINNED | 2019-03-14T07:23:50Z
+    > ipfsserver02    : UNPINNED | 2019-03-14T07:23:50Z
+    > ipfsserver03    : UNPINNED | 2019-03-14T07:23:50Z
+    > ipfsserver04    : UNPINNED | 2019-03-14T07:23:50Z
+    
+用集群命令 pin 一个文件到集群所有节点
+[root@ipfsserver01 tmp]# ipfs-cluster-ctl pin add Qme1KDW24Y4s3mxTT278S9SbRDM397hw9EguYwLbHRtct1
+Qme1KDW24Y4s3mxTT278S9SbRDM397hw9EguYwLbHRtct1 :
+    > ipfsserver01    : PINNED | 2019-03-14T07:23:56Z
+    > ipfsserver05    : PINNED | 2019-03-14T07:23:56Z
+    > ipfsserver02    : PINNED | 2019-03-14T07:23:56Z
+    > ipfsserver03    : PINNED | 2019-03-14T07:23:56Z
+    > ipfsserver04    : PINNED | 2019-03-14T07:23:56Z
+
+
