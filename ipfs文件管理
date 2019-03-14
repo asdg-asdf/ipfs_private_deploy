@@ -34,3 +34,11 @@ Qme1KDW24Y4s3mxTT278S9SbRDM397hw9EguYwLbHRtct1 :
     > ipfsserver04    : PINNED | 2019-03-14T07:23:56Z
 
 
+-w 以目录方式添加一个文件到 ipfs 网络;  -Q 为只输出目录hash值
+[root@ipfsserver03 tmp]# ipfs add -w -Q test22222.txt 
+QmW3yXPVfg7MhaRdpCKrXYQRxBNFVgNTbPkj4TazsozpXs
+[root@ipfsserver03 tmp]# ipfs ls QmW3yXPVfg7MhaRdpCKrXYQRxBNFVgNTbPkj4TazsozpXs     显示该文件内容
+QmPB38V7ex3zTGzd7Djn26nPjX7HGZHpMdXh4QBn1qYBWn 47 test22222.txt
+[root@ipfsserver03 tmp]# ipfs get /ipfs/QmW3yXPVfg7MhaRdpCKrXYQRxBNFVgNTbPkj4TazsozpXs/test22222.txt   获取
+Saving file(s) to test22222.txt
+ 47 B / 47 B [==========================================================================================================] 100.00% 0s
