@@ -42,3 +42,16 @@ QmPB38V7ex3zTGzd7Djn26nPjX7HGZHpMdXh4QBn1qYBWn 47 test22222.txt
 [root@ipfsserver03 tmp]# ipfs get /ipfs/QmW3yXPVfg7MhaRdpCKrXYQRxBNFVgNTbPkj4TazsozpXs/test22222.txt   获取
 Saving file(s) to test22222.txt
  47 B / 47 B [==========================================================================================================] 100.00% 0s
+ 
+ 
+ 
+ 找到最终参考:
+ [root@ipfsserver01 tmp]# ipfs pin ls
+QmVv1he3eAAtAjtCX2hBKZszNKZBECDCj1nHmvjrQ28C1Q indirect
+QmbsdnJNCYYZshcuvSoeeXM5vHRbhvbvgdpqvSzqVDdk18 recursive
+[root@ipfsserver01 tmp]# ipfs refs QmbsdnJNCYYZshcuvSoeeXM5vHRbhvbvgdpqvSzqVDdk18
+QmVv1he3eAAtAjtCX2hBKZszNKZBECDCj1nHmvjrQ28C1Q
+[root@ipfsserver01 tmp]# ipfs cat QmbsdnJNCYYZshcuvSoeeXM5vHRbhvbvgdpqvSzqVDdk18
+Error: this dag node is a directory
+[root@ipfsserver01 tmp]# ipfs cat QmVv1he3eAAtAjtCX2hBKZszNKZBECDCj1nHmvjrQ28C1Q
+testcount1223445667774554
