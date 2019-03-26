@@ -1,5 +1,7 @@
-可使用下面命令把ipfs内部文件 复制到ipfs unix like 文件目录下
-ipfs files cp /ipfs/QmSSXb7Mv8AuhtmEPmiNneFqwWh86YnVqqYK1enHMqBRGA /test/testfile001.txt
+可使用curl或者 wget 命令获取文件  
+wget http://10.220.20.225:8080/ipfs/QmcRZ1JGBW5jbqA7Mzcsw6X5kGdb1jN2P2xKXhmJGgsar8 -O filename.txt
+或者
+curl  http://10.220.20.225:8080/ipfs/QmcRZ1JGBW5jbqA7Mzcsw6X5kGdb1jN2P2xKXhmJGgsar8  -o filename001
 
 
 使用下面命令可把文件块的 唯一值 显示
