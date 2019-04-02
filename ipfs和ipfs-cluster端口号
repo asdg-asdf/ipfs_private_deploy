@@ -1,0 +1,5 @@
+ipfs-cluster
+9094            ipfs-cluster API HTTP侦听端点
+9095            IPFS代理侦听多地址
+9096            对等Cluster-RPC侦听端点
+5001            IPFS守护程序HTTP API端点。这是对等体用于固定内容的守护进程
