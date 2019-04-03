@@ -1,0 +1,39 @@
+ 修改ipfs-cluster配置文件
+ cd ~/.ipfs-cluster
+ vi service.json
+ 修改 restapi 部分
+     "restapi": {
+      "ssl_cert_file": "",
+      "ssl_key_file": "",
+      "http_listen_multiaddress": "/ip4/0.0.0.0/tcp/9094",           配置为0.0.0.0 表示可接受所有网络访问
+      "read_timeout": "30s",
+      "read_header_timeout": "5s",
+      "write_timeout": "1m0s",
+      "idle_timeout": "2m0s",
+      "basic_auth_credentials": {                                    用户名密码填写位置
+        "testuser": "testpass",                                      用户名对应的密码
+        "userwithoutpass": ""
+      },
+      "cors_allowed_origins": [
+        "*"
+      ],
+      "cors_allowed_methods": [
+        "GET","POST","DELETE"                                        restapi接受的方法限制
+      ],
+      "cors_allowed_headers": [],
+      "cors_exposed_headers": [
+        "Content-Type",
+        "X-Stream-Output",
+        "X-Chunked-Output",
+        "X-Content-Length"
+      ],
+      "cors_allow_credentials": true,
+      "cors_max_age": "0s"
+    }
+
+ 
+ 配置完成后需要用下面命令完成集群管理 
+ ipfs-cluster-ctl --basic-auth "testuser:testpass" --force-http add -w service.json.bak20190402
+ 
+ restapi调用也可用curl完成
+ curl --basic --user testuser:testpass http://10.220.20.221:9094/id
