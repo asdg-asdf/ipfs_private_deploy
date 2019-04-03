@@ -1,3 +1,4 @@
+ 参考 https://github.com/ipfs/ipfs-cluster/blob/master/sharness/config/basic_auth/service.json 对配置文件进行修改
  修改ipfs-cluster配置文件
  cd ~/.ipfs-cluster
  vi service.json
