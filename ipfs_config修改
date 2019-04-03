@@ -1,0 +1,5 @@
+命令方式修改 ipfs 配置
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["http://localhost:3000", "https://webui.ipfs.io"]'
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST"]
+
+或者 修改默认位置的ipfs   /root/.ipfs/config
