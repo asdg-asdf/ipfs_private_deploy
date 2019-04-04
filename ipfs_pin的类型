@@ -1,0 +1,5 @@
+IPFS 中有三种 pin 类型
+
+    direct pins 仅仅pin住一个和其它区块没有关联的独立block
+    recursive pins pin住给出的block以及递归pin住它的所有children
+    indirect pins recursive pin的children，不是直接被pin住的，是被递归pin住的
