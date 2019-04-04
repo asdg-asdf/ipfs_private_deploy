@@ -1,0 +1,30 @@
+配置 CORS
+如果你远程访问 webui 会议都 403 问题,需要配置 IPFS 然后重启 ipfs daemon
+ipfs config show
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST", "OPTIONS"]'
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials '["true"]'
+ipfs config show
+修改后如下
+  "HTTPHeaders": {
+      "Access-Control-Allow-Credentials": [
+        "true"
+      ],
+      "Access-Control-Allow-Methods": [
+        "PUT",
+        "GET",
+        "POST",
+        "OPTIONS"
+      ],
+      "Access-Control-Allow-Origin": [
+        "*"
+      ],
+      "Server": [
+        "go-ipfs/0.4.17"
+      ]
+    }
+  },
+生产环境需要严格配置 CORS
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"http://example.com\"]"
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials "[\"true\"]"
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods "[\"PUT\", \"POST\", \"GET\"]"			
