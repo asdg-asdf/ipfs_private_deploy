@@ -1,0 +1,12 @@
+/usr/lib/systemd/system/ipfs-cluster.service
+[Unit]
+Description=IPFS Cluster Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/ipfs-cluster-service daemon --upgrade
+Restart=on-failure
+User=root
+
+[Install]
+WantedBy=multi-user.target
