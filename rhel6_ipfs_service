@@ -1,3 +1,4 @@
+/etc/init.d/ipfs
 #!/bin/bash
 #
 #   ipfs deamon
