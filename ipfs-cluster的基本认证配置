@@ -2,6 +2,10 @@
  命令修改方法
     ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST", "OPTIONS"]'
     ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+    windows下操作需要转移 \
+        $ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"http://example.com\"]"
+        $ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials "[\"true\"]"
+        $ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods "[\"PUT\", \"POST\", \"GET\"]"
 
  
  修改ipfs-cluster配置文件
