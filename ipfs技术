@@ -1,0 +1,145 @@
+摘抄来自 http://www.netkiller.cn/blockchain/ipfs/devel/ch37s02.html
+带宽状态
+# ipfs stats bw
+
+
+仓库状态
+# ipfs stats repo
+
+显示 IPFS 信息
+$ ipfs id
+
+节点
+ipfs bootstrap list
+
+
+管理P2P网络链接
+# ipfs swarm peers
+
+
+查看节点端口详情
+$ ipfs dht findpeer QmUHKXqq4e56BRu16D8wKHsqc8Ere3w6gLLqrfMF7djTwe
+
+
+修改配置
+$ ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
+
+
+默认 API 网关是 127.0.0.1 8080 端口
+]$ ipfs config Addresses.Gateway
+/ip4/127.0.0.1/tcp/8080
+如需远程访问设置为 0.0.0.0
+$ ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
+$ ipfs config Addresses.Gateway
+/ip4/0.0.0.0/tcp/8080
+
+
+ipfs mount
+挂载前提是必须安装 fusermount
+[root@netkiller test]# yum install fuse
+:
+如果没有安装 fusermount 会出如下提示
+17:35:29.129 ERROR       node: error mounting: fusermount: exec: "fusermount": executable file not found in $PATH mount_unix.go:89
+:
+将 ipfs 挂在到本地文件系统，默认目录 /ipfs 和 /ipns。
+> mkdir /ipfs /ipns
+> sudo chown `whoami` /ipfs /ipns
+> ipfs daemon &
+> ipfs mount
+:
+挂载到指定目录
+[root@netkiller ~]# mkdir test
+[root@netkiller test]# cd test
+[root@netkiller test]# mkdir ipfs ipns
+[root@netkiller test]# ipfs mount -f ipfs -n ipns
+IPFS mounted at: ipfs
+IPNS mounted at: ipns
+:
+检查挂载情况
+[root@netkiller test]# mount | grep fuse
+fusectl on /sys/fs/fuse/connections type fusectl (rw,relatime)
+/dev/fuse on /root/test/ipfs type fuse (rw,nosuid,nodev,relatime,user_id=0,group_id=0)
+/dev/fuse on /root/test/ipns type fuse (rw,nosuid,nodev,relatime,user_id=0,group_id=0)
+:
+卸载
+umount /ipfs
+umount /ipns
+
+
+DNS 解析
+IPFS 允许用户使用现有的域名系统替代HASH值，这样更便于记忆。
+[root@netkiller ~]# ipfs cat /ipfs/QmS4ustL54uo8FzR9455qaxZwuMiUhyvMcX9Ba8nUH4uVv/readme
+DNS设置，只需要在 DNS 解析加入一条 TXT 记录：
+记录类型		主机记录		记录值
+TXT			ipfs		dnslink=/ipns/QmS4ustL54uo8FzR9455qaxZwuMiUhyvMcX9Ba8nUH4uVv
+IPFS 允许用户使用现有的域名系统替代HASH值，这样更便于记忆。
+[root@netkiller ~]# ipfs cat /ipns/ipfs.netkiller.cn/readme
+
+
+配置 CORS
+如果你远程访问 webui 会议都 403 问题,需要配置 IPFS 然后重启 ipfs daemon
+ipfs config show
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST", "OPTIONS"]'
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials '["true"]'
+ipfs config show
+修改后如下
+  "HTTPHeaders": {
+      "Access-Control-Allow-Credentials": [
+        "true"
+      ],
+      "Access-Control-Allow-Methods": [
+        "PUT",
+        "GET",
+        "POST",
+        "OPTIONS"
+      ],
+      "Access-Control-Allow-Origin": [
+        "*"
+      ],
+      "Server": [
+        "go-ipfs/0.4.17"
+      ]
+    }
+  },
+生产环境需要严格配置 CORS
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"http://example.com\"]"
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials "[\"true\"]"
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods "[\"PUT\", \"POST\", \"GET\"]"			
+		
+
+访问api	
+curl http://127.0.0.1:5001/api/v0/swarm/peers		
+			
+上传文件
+curl -F "image=@/home/bar.jpg" 127.0.0.1:5001/api/v0/add			
+
+如果你熟悉 curl 命令，可以使用网页版
+<form action="http://127.0.0.1:5001/api/v0/add">
+  <input type="file" name="image" accept="image/*">
+  <input type="submit">
+</form>			
+			
+
+查看文件
+curl "https://ipfs.infura.io:5001/api/v0/cat?arg=QmToBaNbJQ1uNYHr93Z7RTjdPRmUWmenhUFXhBAx2sSke5"		
+
+下载文件 请求地址
+GET https://ipfs.infura.io:5001/api/v0/get?arg=<ipfs-path>&output=<value>&archive=false&compress=false&compression-level=-1
+
+请求参数
+arg [required] - IPFS Hash 值
+output [optional] - 存储路径
+archive [optional] - 打包程 tar 文件. 默认: “false” 不打包.
+compress [optional] - 开启 GZIP 压缩. 默认 “false” 不开启.
+compression-level [optional] - 压缩级别 (1-9). 默认是: “-1”.			
+演示
+# cd /tmp 			
+# wget -q "https://ipfs.infura.io:5001/api/v0/get?arg=QmZtmD2qt6fJot32nabSP3CUjicnypEBz7bHVDhPQt9aAy&archive=true" -O test.tar
+# tar zxvf test.tar 
+x QmZtmD2qt6fJot32nabSP3CUjicnypEBz7bHVDhPQt9aAy
+# cat QmZtmD2qt6fJot32nabSP3CUjicnypEBz7bHVDhPQt9aAy 
+version 1 of my text
+			
+			
+
