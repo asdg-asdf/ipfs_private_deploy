@@ -1,0 +1,13 @@
+/usr/lib/systemd/system/ipfs.service
+[Unit]
+Description=IPFS daemon
+After=network.target
+
+[Service]
+Environment="IPFS_FD_MAX=4096"
+ExecStart=/usr/local/bin/ipfs daemon --migrate
+Restart=on-failure
+User=root
+
+[Install]
+WantedBy=multi-user.target
