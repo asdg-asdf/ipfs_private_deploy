@@ -1,6 +1,7 @@
 linux准备
 # mkdir /opt/ipfs/
 # mkdir /opt/ipfs-server/
+# mkdir /home/ipfsrepo/
 
 所有私有节点安装 ipfs 包
 https://dist.ipfs.io/#go-ipfs   下载最新版本go-ipfs.tar.gz
@@ -11,9 +12,18 @@ https://dist.ipfs.io/#go-ipfs   下载最新版本go-ipfs.tar.gz
 所有私有节点配置环境变量LIBP2P_FORCE_PNET=1 , 强制ipfs系统使用私有网络方式启动 daemon
 # echo 'export LIBP2P_FORCE_PNET=1' >> /etc/profile
 
-
 配置环境变量 IPFS_PATH=/home/ipfsrepo , 强制ipfs系统使用/home/ipfsrepo 路径作为根目录
 # echo 'export IPFS_PATH=/home/ipfsrepo'  >> /etc/profile
+
+配置私有链的信任key,没有swarm.key的节点无法连接到自有链
+# go get -u github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen
+# cd src/github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen
+或者
+# cd src/github.com/Kubuxu/go-ipfs-swarm-key-gen-master/ipfs-swarm-key-gen
+# go bulid
+# ./ipfs-swarm-key-gen > ~/.ipfs/swarm.key
+# scp ~/.ipfs/swarm.key ${ipaddress}:/root/.ipfs/   # 复制私有swarm.key文件到所有需要部署私有链的节点
+
 
 所有私有节点初始化 ipfs 配置
 # ipfs init
@@ -31,14 +41,6 @@ https://dist.ipfs.io/#go-ipfs   下载最新版本go-ipfs.tar.gz
     ]
   },
 
-配置私有链的信任key,没有swarm.key的节点无法连接到自有链
-# go get -u github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen
-# cd src/github.com/Kubuxu/go-ipfs-swarm-key-gen/ipfs-swarm-key-gen
-或者
-# cd src/github.com/Kubuxu/go-ipfs-swarm-key-gen-master/ipfs-swarm-key-gen
-# go bulid
-# ./ipfs-swarm-key-gen > ~/.ipfs/swarm.key
-# scp ~/.ipfs/swarm.key ${ipaddress}:/root/.ipfs/   # 复制私有swarm.key文件到所有需要部署私有链的节点
 
 
 重启动 ipfs daemon 所有私有节点
@@ -57,6 +59,8 @@ After=network.target
 
 [Service]
 Environment="IPFS_FD_MAX=4096"
+Environment="LIBP2P_FORCE_PNET=1"
+Environment="IPFS_PATH=/home/ipfsrepo"
 ExecStart=/usr/local/bin/ipfs daemon --migrate
 Restart=on-failure
 User=root
