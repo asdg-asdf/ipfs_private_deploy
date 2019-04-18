@@ -21,9 +21,12 @@ https://dist.ipfs.io/#go-ipfs   下载最新版本go-ipfs.tar.gz
 或者
 # cd src/github.com/Kubuxu/go-ipfs-swarm-key-gen-master/ipfs-swarm-key-gen
 # go bulid
-# ./ipfs-swarm-key-gen > ~/.ipfs/swarm.key
+# ./ipfs-swarm-key-gen > ~/.ipfs/swarm.key    或者 /home/ipfsrepo/swarm.key
 # scp ~/.ipfs/swarm.key ${ipaddress}:/root/.ipfs/   # 复制私有swarm.key文件到所有需要部署私有链的节点
+或者 #./ipfs-swarm-key-gen > /home/ipfsrepo/swarm.key
 
+# export  LIBP2P_FORCE_PNET=1
+# export  IPFS_PATH=/home/ipfsrepo
 
 所有私有节点初始化 ipfs 配置
 # ipfs init
