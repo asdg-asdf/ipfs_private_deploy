@@ -47,4 +47,4 @@
  
  restapi调用也可用curl完成
  curl --basic --user testuser:testpass http://10.220.20.221:9094/id
- curl --basic --user testuser:testpass http://10.220.20.221:9094/add -F file=/tmp/abc3.txt    上传文件
+ curl --basic --user testuser:testpass http://10.220.20.221:9094/add -F "file=@/tmp/abc3.txt"    上传文件
