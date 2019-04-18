@@ -75,6 +75,9 @@ QmXysjiXyvtesL7jTQ4u9DuedKYrfsM8vf8qgUNtnZbaGx  为该节点集群id
 # systemctl stop ipfs-cluster.service
 # ipfs-cluster-service daemon --bootstrap /ip4/10.10.20.221/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
 
+# crtl-C 退出当前命令输出
+# systemctl restart ipfs-cluster.service     用后台进程方式启动ipfs-cluster
+
 
 查看其他节点信息
 # ipfs-cluster-ctl peers ls
