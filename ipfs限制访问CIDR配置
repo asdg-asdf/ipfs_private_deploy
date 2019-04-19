@@ -1,0 +1,4 @@
+ipfs 支持以过滤器方式限制访问, 格式为CIDR(无类别域间路由)
+比如 添加"/ip4/192.168.0.0/ipcidr/16" 会屏蔽192.168 网段访问
+
+ipfs swarm filters add /ip4/192.168.0.0/ipcidr/16
