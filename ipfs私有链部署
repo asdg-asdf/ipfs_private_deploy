@@ -44,7 +44,12 @@ https://dist.ipfs.io/#go-ipfs   下载最新版本go-ipfs.tar.gz
     ]
   },
 
+配置端口
+ipfs config Addresses.API /ip4/0.0.0.0/tcp/8080
+ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
 
+删除其他互联网节点
+ipfs config --json Bootstrap "[]"
 
 重启动 ipfs daemon 所有私有节点
 关闭 防火墙
