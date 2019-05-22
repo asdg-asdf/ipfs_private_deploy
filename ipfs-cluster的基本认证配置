@@ -46,5 +46,5 @@
  ipfs-cluster-ctl --basic-auth "testuser:testpass" --force-http add -w service.json.bak20190402
  
  restapi调用也可用curl完成
- curl --basic --user testuser:testpass http://10.220.20.221:9094/id
- curl --basic --user testuser:testpass http://10.220.20.221:9094/add -F "file=@/tmp/abc3.txt"    上传文件
+ curl --basic --user testuser:testpass http://10.180.11.221:9094/id
+ curl --basic --user testuser:testpass http://10.180.11.221:9094/add -F "file=@/tmp/abc3.txt"    上传文件
