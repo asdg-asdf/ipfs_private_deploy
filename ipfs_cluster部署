@@ -83,7 +83,7 @@ QmXysjiXyvtesL7jTQ4u9DuedKYrfsM8vf8qgUNtnZbaGx  为该节点集群id
 # ipfs-cluster-ctl peers ls
 QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR | ipfsserver01 | Sees 4 other peers
   > Addresses:
-    - /ip4/10.220.20.221/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
+    - /ip4/10.180.11.221/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
     - /ip4/127.0.0.1/tcp/9096/ipfs/QmNPpAU8AWMgmfWgkhQxXZuKVsD6Y5sUQicc3xNU5pF4YR
   > IPFS: QmVKxUgE6MGtPydSpoxCTyFjeEbxtXJpBKP5bYWhdSh9PW
     - /ip4/10.220.20.221/tcp/4001/ipfs/QmVKxUgE6MGtPydSpoxCTyFjeEbxtXJpBKP5bYWhdSh9PW
