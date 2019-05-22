@@ -1,7 +1,14 @@
 可使用curl或者 wget 命令获取文件  
-wget http://10.220.20.225:8080/ipfs/QmcRZ1JGBW5jbqA7Mzcsw6X5kGdb1jN2P2xKXhmJGgsar8 -O filename.txt
+wget http://10.180.11.221:8080/ipfs/QmcRZ1JGBW5jbqA7Mzcsw6X5kGdb1jN2P2xKXhmJGgsar8 -O filename.txt
 或者
-curl  http://10.220.20.225:8080/ipfs/QmcRZ1JGBW5jbqA7Mzcsw6X5kGdb1jN2P2xKXhmJGgsar8  -o filename001
+curl  http://10.180.11.221:8080/ipfs/QmcRZ1JGBW5jbqA7Mzcsw6X5kGdb1jN2P2xKXhmJGgsar8  -o filename001
+
+配置完成后需要用下面命令完成集群管理 
+ipfs-cluster-ctl --basic-auth "testuser:testpass" --force-http add -w service.json.bak20190402
+ 
+restapi调用也可用curl完成
+curl --basic --user testuser:testpass http://10.180.11.221:9094/id
+curl --basic --user testuser:testpass http://10.180.11.221:9094/add -F "file=@/tmp/abc3.txt" 上传文件
 
 
 使用下面命令可把文件块的 唯一值 显示
