@@ -5,6 +5,7 @@ After=network.target
 
 [Service]
 Environment="IPFS_FD_MAX=4096"
+Environment="LIBP2P_FORCE_PNET=1"
 ExecStart=/usr/local/bin/ipfs daemon --migrate
 Restart=on-failure
 User=root
