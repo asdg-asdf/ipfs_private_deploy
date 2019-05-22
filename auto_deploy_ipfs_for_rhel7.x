@@ -71,9 +71,10 @@ echo '[Install]' >> /usr/lib/systemd/system/ipfs-cluster.service
 echo 'WantedBy=multi-user.target' >> /usr/lib/systemd/system/ipfs-cluster.service
 
 systemctl daemon-reload 
-systemctl enalbe ipfs-cluster.service 
-systemctl restart ipfs-cluster.service 
 
 systemctl enable ipfs.service
 ipfs bootstrap rm --all
 systemctl restart ipfs.service
+
+systemctl enalbe ipfs-cluster.service 
+systemctl restart ipfs-cluster.service 
