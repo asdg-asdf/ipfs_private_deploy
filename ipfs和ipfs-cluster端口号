@@ -8,4 +8,3 @@ ipfs 端口号
 4001            IPFS对等节点复制端口
 5001            IPFS守护程序HTTP API端点。这是对等体用于固定内容的守护进程
 8080            Gateway server listening,http方式获取文件端口
-
